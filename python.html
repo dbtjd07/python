@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>파이썬 기초 마스터 (1강~5강)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Inter & JetBrains Mono) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        },
+                        pyblue: '#306998',
+                        pyyellow: '#FFE873'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Mobile Smooth Scroll and Custom Scrollbars */
+        html {
+            scroll-behavior: smooth;
+            -webkit-tap-highlight-color: transparent;
+        }
+        pre code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+        /* Custom scrollbar for dark code blocks */
+        .code-scroll::-webkit-scrollbar {
+            height: 6px;
+        }
+        .code-scroll::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        .code-scroll::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 3px;
+        }
+        /* Hide scrollbar for horizontal tabs on mobile */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col pb-12">
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-50 bg-slate-900 text-white shadow-md border-b border-slate-800">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <i class="fa-brands fa-python text-2xl text-yellow-400"></i>
+                <h1 class="text-lg font-bold tracking-tight">Python 기초 마스터</h1>
+            </div>
+            <span class="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-full font-mono border border-slate-700">v1.0 (1강~5강)</span>
+        </div>
+        
+        <!-- Mobile Navigation Tabs (Scrollable) -->
+        <nav class="bg-slate-800 border-t border-slate-700 overflow-x-auto no-scrollbar">
+            <div class="flex px-2 min-w-max space-x-1 py-1.5" id="nav-tabs">
+                <button onclick="switchTab('lecture1')" id="tab-lecture1" class="tab-btn px-3.5 py-2 rounded-lg text-sm font-medium transition-all text-slate-300 hover:bg-slate-700 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-blue-400"></span>1강: 자료형/인덱싱
+                </button>
+                <button onclick="switchTab('lecture2')" id="tab-lecture2" class="tab-btn px-3.5 py-2 rounded-lg text-sm font-medium transition-all text-slate-300 hover:bg-slate-700 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-blue-400"></span>2강: 포매팅
+                </button>
+                <button onclick="switchTab('lecture3')" id="tab-lecture3" class="tab-btn px-3.5 py-2 rounded-lg text-sm font-medium transition-all text-slate-300 hover:bg-slate-700 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-blue-400"></span>3강: 메서드/입출력
+                </button>
+                <button onclick="switchTab('lecture4')" id="tab-lecture4" class="tab-btn px-3.5 py-2 rounded-lg text-sm font-medium transition-all text-slate-300 hover:bg-slate-700 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-blue-400"></span>4강: 리스트/튜플
+                </button>
+                <button onclick="switchTab('lecture5')" id="tab-lecture5" class="tab-btn px-3.5 py-2 rounded-lg text-sm font-medium transition-all text-slate-300 hover:bg-slate-700 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-blue-400"></span>5강: 딕셔너리/제어문
+                </button>
+                <button onclick="switchTab('sourceCode')" id="tab-sourceCode" class="tab-btn px-3.5 py-2 rounded-lg text-sm font-medium transition-all text-slate-300 hover:bg-slate-700 flex items-center gap-1.5">
+                    <i class="fa-solid fa-code text-xs text-emerald-400"></i>전체 코드
+                </button>
+                <button onclick="switchTab('quiz')" id="tab-quiz" class="tab-btn px-3.5 py-2 rounded-lg text-sm font-medium transition-all text-slate-300 hover:bg-slate-700 flex items-center gap-1.5 bg-yellow-500/10 text-yellow-300 border border-yellow-500/30">
+                    <i class="fa-solid fa-clipboard-question text-xs text-yellow-400"></i>기초 퀴즈
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-4xl mx-auto w-full px-4 pt-5 flex-1">
+
+        <!-- Notification Toast -->
+        <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-2.5 rounded-xl shadow-2xl transition-opacity duration-300 opacity-0 pointer-events-none z-50 flex items-center gap-2 border border-slate-700 text-sm">
+            <i class="fa-solid fa-check-circle text-emerald-400"></i>
+            <span id="toast-message">코드가 클립보드에 복사되었습니다!</span>
+        </div>
+
+        <!-- TAB 1: 1강 -->
+        <section id="lecture1" class="tab-content hidden space-y-6">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex items-center gap-2 text-brand-600 font-bold text-xs uppercase tracking-wider mb-1">Lecture 01</div>
+                <h2 class="text-2xl font-bold text-slate-900 mb-3">자료형, 연산자, 문자열 & 슬라이싱</h2>
+                <p class="text-slate-600 leading-relaxed text-sm">
+                    파이썬의 가장 기본적인 데이터 타입인 정수(int), 실수(float), 문자열(str)과 기초 연산자, 그리고 문자열 인덱싱/슬라이싱 문법을 학습합니다.
+                </p>
+            </div>
+
+            <!-- Key Concepts Cards -->
+            <div class="grid gap-4 md:grid-cols-2">
+                <div class="bg-white p-4.5 rounded-xl border border-slate-200 shadow-sm">
+                    <h3 class="font-bold text-slate-900 text-base mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-[#] text-blue-500"></i> 기본 자료형 & 연산자
+                    </h3>
+                    <ul class="text-xs text-slate-600 space-y-1.5 list-disc list-inside">
+                        <li><strong class="text-slate-800">정수형(int):</strong> <code class="bg-slate-100 px-1 py-0.5 rounded text-blue-600">3</code>, <code class="bg-slate-100 px-1 py-0.5 rounded text-blue-600">100</code></li>
+                        <li><strong class="text-slate-800">실수형(float):</strong> <code class="bg-slate-100 px-1 py-0.5 rounded text-blue-600">3.14</code>, <code class="bg-slate-100 px-1 py-0.5 rounded text-blue-600">-120.22</code></li>
+                        <li><strong class="text-slate-800">사칙연산:</strong> <code class="bg-slate-100 px-1 py-0.5 rounded">+</code>, <code class="bg-slate-100 px-1 py-0.5 rounded">-</code>, <code class="bg-slate-100 px-1 py-0.5 rounded">*</code>, <code class="bg-slate-100 px-1 py-0.5 rounded">/</code> (나눗셈 결과는 float)</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white p-4.5 rounded-xl border border-slate-200 shadow-sm">
+                    <h3 class="font-bold text-slate-900 text-base mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-[#] text-blue-500"></i> 이스케이프 코드 & 함수
+                    </h3>
+                    <ul class="text-xs text-slate-600 space-y-1.5 list-disc list-inside">
+                        <li><code class="bg-slate-100 px-1 py-0.5 rounded text-rose-600">\n</code> (줄바꿈), <code class="bg-slate-100 px-1 py-0.5 rounded text-rose-600">\t</code> (탭 간격)</li>
+                        <li><code class="bg-slate-100 px-1 py-0.5 rounded text-rose-600">\'</code>, <code class="bg-slate-100 px-1 py-0.5 rounded text-rose-600">\"</code>, <code class="bg-slate-100 px-1 py-0.5 rounded text-rose-600">\\</code> (특수문자 출력)</li>
+                        <li><code class="bg-slate-100 px-1 py-0.5 rounded text-indigo-600">len(a)</code>: 문자열의 길이(글자 수) 구하기</li>
+                        <li>문자열 반복: <code class="bg-slate-100 px-1 py-0.5 rounded">"ㅋ" * 12</code></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Code Example 1 -->
+            <div class="bg-slate-900 rounded-xl overflow-hidden shadow-md border border-slate-800">
+                <div class="bg-slate-800 px-4 py-2.5 flex items-center justify-between text-xs text-slate-300">
+                    <span class="font-mono flex items-center gap-2"><i class="fa-brands fa-python text-yellow-400"></i> 인덱싱과 슬라이싱 (Indexing & Slicing)</span>
+                    <button onclick="copyCode('code-lec1')" class="hover:text-white px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 transition flex items-center gap-1">
+                        <i class="fa-regular fa-copy"></i> 복사
+                    </button>
+                </div>
+                <div class="p-4 overflow-x-auto code-scroll">
+                    <pre><code id="code-lec1" class="text-emerald-400">a = "Life is too short, You need python"
+
+# 인덱싱 (Indexing - 특정 위치 지정)
+print(a[0])      # 'L' (첫 번째 글자)
+print(a[3])      # 'e' (네 번째 글자)
+print(a[-1])     # 'n' (맨 뒤에서 첫 번째 글자)
+
+# 슬라이싱 (Slicing - 범위를 지정 [시작:끝index+1])
+print(a[0:4])    # 'Life' (0번부터 3번까지)
+print(a[12:17])  # 'short'
+print(a[:17])    # 'Life is too short' (처음부터 16번까지)
+print(a[23:])    # 'need python' (23번부터 끝까지)
+print(a[:])      # 전체 문자열 복사</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: 2강 -->
+        <section id="lecture2" class="tab-content hidden space-y-6">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex items-center gap-2 text-brand-600 font-bold text-xs uppercase tracking-wider mb-1">Lecture 02</div>
+                <h2 class="text-2xl font-bold text-slate-900 mb-3">문자열 포매팅 & 실습</h2>
+                <p class="text-slate-600 leading-relaxed text-sm">
+                    문자열 내부에 변수나 원하는 값을 삽입하는 여러 기법(<code class="bg-slate-100 px-1 py-0.5 rounded text-blue-600">% 포매팅</code>, <code class="bg-slate-100 px-1 py-0.5 rounded text-blue-600">format() 메서드</code>)과 날짜 데이터 슬라이싱 응용을 다룹니다.
+                </p>
+            </div>
+
+            <!-- Concept Card -->
+            <div class="bg-white p-4.5 rounded-xl border border-slate-200 shadow-sm space-y-3">
+                <h3 class="font-bold text-slate-900 text-base mb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-percent text-blue-500"></i> % 포매팅 코드 규칙
+                </h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                    <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                        <span class="font-mono font-bold text-blue-600">%s</span> : 문자열 (String)
+                    </div>
+                    <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                        <span class="font-mono font-bold text-blue-600">%d</span> : 정수 (Integer)
+                    </div>
+                    <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                        <span class="font-mono font-bold text-blue-600">%f</span> : 부동소수점 (Float)
+                    </div>
+                    <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                        <span class="font-mono font-bold text-blue-600">%.2f</span> : 소수점 둘째 자리
+                    </div>
+                </div>
+            </div>
+
+            <!-- Code Example 2 -->
+            <div class="bg-slate-900 rounded-xl overflow-hidden shadow-md border border-slate-800">
+                <div class="bg-slate-800 px-4 py-2.5 flex items-center justify-between text-xs text-slate-300">
+                    <span class="font-mono flex items-center gap-2"><i class="fa-brands fa-python text-yellow-400"></i> 포매팅 방식 및 슬라이싱 실습</span>
+                    <button onclick="copyCode('code-lec2')" class="hover:text-white px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 transition flex items-center gap-1">
+                        <i class="fa-regular fa-copy"></i> 복사
+                    </button>
+                </div>
+                <div class="p-4 overflow-x-auto code-scroll">
+                    <pre><code id="code-lec2" class="text-emerald-400"># 1. % 포매팅 사용법
+grade = 2
+score = 3.8
+print("나는 %d학년입니다." % grade)
+print("성적은 %.2f점 입니다." % score)
+
+# 2. .format() 메서드 사용법
+earth, moon, km = "지구", "달", 384000
+print("{0}와 {1} 사이의 거리는 평균 {2}km입니다.".format(earth, moon, km))
+# 이름(Key)을 직접 지정하는 방식
+print("{earth}와 {moon} 거리는 {km}km입니다.".format(earth="지구", moon="달", km=384000))
+
+# 3. 날짜 문자열 슬라이싱 실습
+p = "20260916맑음28.5"
+print("year: " + p[:4])      # 2026
+print("month: " + p[4:6])    # 09
+print("day: " + p[6:8])      # 16
+print("Weather: " + p[8:10]) # 맑음
+print("temp: " + p[-4:])     # 28.5</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: 3강 -->
+        <section id="lecture3" class="tab-content hidden space-y-6">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex items-center gap-2 text-brand-600 font-bold text-xs uppercase tracking-wider mb-1">Lecture 03</div>
+                <h2 class="text-2xl font-bold text-slate-900 mb-3">고급 포매팅, 문자열 메서드 & 사용자 입출력</h2>
+                <p class="text-slate-600 leading-relaxed text-sm">
+                    문자열의 정렬, 공백 제거, 대체 등 강력한 내장 메서드와 <code class="bg-slate-100 px-1 py-0.5 rounded text-blue-600">input()</code> 함수를 사용해 동적으로 사용자의 값을 입력받는 방법을 배우게 됩니다.
+                </p>
+            </div>
+
+            <!-- Grid Methods -->
+            <div class="bg-white p-4.5 rounded-xl border border-slate-200 shadow-sm">
+                <h3 class="font-bold text-slate-900 text-base mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-cube text-blue-500"></i> 자주 쓰는 문자열 내장 메서드
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+                    <div class="p-2 border rounded bg-slate-50"><code class="font-bold text-indigo-600">.upper() / .lower()</code> : 대/소문자 변환</div>
+                    <div class="p-2 border rounded bg-slate-50"><code class="font-bold text-indigo-600">.strip() / .lstrip()</code> : 양쪽/왼쪽 공백 제거</div>
+                    <div class="p-2 border rounded bg-slate-50"><code class="font-bold text-indigo-600">.replace(old, new)</code> : 문자열 치환</div>
+                    <div class="p-2 border rounded bg-slate-50"><code class="font-bold text-indigo-600">.split()</code> : 공백 또는 구분자로 분할 (리스트 반환)</div>
+                    <div class="p-2 border rounded bg-slate-50"><code class="font-bold text-indigo-600">"구분자".join(iterable)</code> : 문자열 합치기</div>
+                    <div class="p-2 border rounded bg-slate-50"><code class="font-bold text-indigo-600">.count('a')</code> : 특정 문자 개수 세기</div>
+                </div>
+            </div>
+
+            <!-- Code Example 3 -->
+            <div class="bg-slate-900 rounded-xl overflow-hidden shadow-md border border-slate-800">
+                <div class="bg-slate-800 px-4 py-2.5 flex items-center justify-between text-xs text-slate-300">
+                    <span class="font-mono flex items-center gap-2"><i class="fa-brands fa-python text-yellow-400"></i> 고급 포매팅 정렬 & input() 실습</span>
+                    <button onclick="copyCode('code-lec3')" class="hover:text-white px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 transition flex items-center gap-1">
+                        <i class="fa-regular fa-copy"></i> 복사
+                    </button>
+                </div>
+                <div class="p-4 overflow-x-auto code-scroll">
+                    <pre><code id="code-lec3" class="text-emerald-400"># 1. 정렬 및 채우기
+print("{0:&lt;10}!".format("어서와"))   # 왼쪽 정렬: '어서와       !'
+print("{0:&gt;10}!".format("어서와"))   # 오른쪽 정렬: '       어서와!'
+print("{0:-^19}".format("어서와"))   # 가운데 정렬 후 '-' 채움
+
+# 2. 문자열 변환 및 조인
+monday = "   월요일 좋아   "
+print(monday.strip())               # '월요일 좋아' (공백 제거)
+print(monday.replace("좋아", "싫어")) # '   월요일 싫어   '
+
+# 3. input() 사용자 입력 받기 (입력값은 기본적으로 str!)
+name = input("이름을 입력하세요: ")
+print(name, "님 반갑습니다")
+
+# 숫자로 계산하려면 int() 또는 float()로 형변환 필수!
+num1 = int(input("첫번째 숫자를 입력하세요: "))
+num2 = int(input("두번째 숫자를 입력하세요: "))
+print("두 숫자의 합은", num1 + num2, "입니다")</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: 4강 -->
+        <section id="lecture4" class="tab-content hidden space-y-6">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex items-center gap-2 text-brand-600 font-bold text-xs uppercase tracking-wider mb-1">Lecture 04</div>
+                <h2 class="text-2xl font-bold text-slate-900 mb-3">탐색, 리스트(List) & 튜플(Tuple)</h2>
+                <p class="text-slate-600 leading-relaxed text-sm">
+                    순서가 있고 수정이 가능한 리스트(List) 자료형의 다양한 다루기(추가, 삭제, 정렬)와 요소 변경이 불가능한 튜플(Tuple)의 차이점을 파악합니다.
+                </p>
+            </div>
+
+            <!-- List Method Summary Grid -->
+            <div class="bg-white p-4.5 rounded-xl border border-slate-200 shadow-sm">
+                <h3 class="font-bold text-slate-900 text-base mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-list-check text-blue-500"></i> 리스트 주요 메서드 요약
+                </h3>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
+                    <div class="p-2 border rounded bg-slate-50"><code class="font-bold text-blue-600">.append(x)</code> : 맨 뒤에 x 추가</div>
+                    <div class="p-2 border rounded bg-slate-50"><code class="font-bold text-blue-600">.sort()</code> : 오름차순 정렬</div>
+                    <div class="p-2 border rounded bg-slate-50"><code class="font-bold text-blue-600">.reverse()</code> : 리스트 순서 뒤집기</div>
+                    <div class="p-2 border rounded bg-slate-50"><code class="font-bold text-blue-600">.insert(i, x)</code> : i 위치에 x 삽입</div>
+                    <div class="p-2 border rounded bg-slate-50"><code class="font-bold text-blue-600">.remove(x)</code> : 첫 번째 x 값 삭제</div>
+                    <div class="p-2 border rounded bg-slate-50"><code class="font-bold text-blue-600">.pop() / .pop(i)</code> : 요소 꺼내고 삭제</div>
+                    <div class="p-2 border rounded bg-slate-50"><code class="font-bold text-blue-600">.extend(list)</code> : 리스트 확장</div>
+                    <div class="p-2 border rounded bg-slate-50"><code class="font-bold text-blue-600">del a[i]</code> : i번째 인덱스 삭제</div>
+                </div>
+            </div>
+
+            <!-- Code Example 4 -->
+            <div class="bg-slate-900 rounded-xl overflow-hidden shadow-md border border-slate-800">
+                <div class="bg-slate-800 px-4 py-2.5 flex items-center justify-between text-xs text-slate-300">
+                    <span class="font-mono flex items-center gap-2"><i class="fa-brands fa-python text-yellow-400"></i> 리스트 조작 및 튜플 실습</span>
+                    <button onclick="copyCode('code-lec4')" class="hover:text-white px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 transition flex items-center gap-1">
+                        <i class="fa-regular fa-copy"></i> 복사
+                    </button>
+                </div>
+                <div class="p-4 overflow-x-auto code-scroll">
+                    <pre><code id="code-lec4" class="text-emerald-400"># 1. 문자열 탐색: find vs index
+a = "You're my soda pop."
+print(a.find("x"))   # -1 (찾는 문자가 없으면 -1 반환)
+# print(a.index("x")) # Error 발생!
+
+# 2. 리스트(List) 생성 및 수정
+food = ['pizza', 'chicken', 'burger']
+food.append('hotdog')       # 맨 뒤 요소 추가
+food.insert(1, 'salad')      # 1번 인덱스 위치에 추가
+food.remove('pizza')        # 'pizza' 값 직접 삭제
+print(food)
+
+num = [21, 2, 27, 24, 8]
+num.sort()                  # 정렬: [2, 8, 21, 24, 27]
+print(num)
+
+# 3. 튜플(Tuple) - ()로 선언하며, 요소를 변경/삭제 불가!
+a = (1,)                    # 요소가 1개일 땐 컴마(,) 필수!
+b = (1, 2, 3, 4, 5)
+d = (33, 44, ('d', 'e'))    # 중첩 튜플 가능</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 5: 5강 -->
+        <section id="lecture5" class="tab-content hidden space-y-6">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex items-center gap-2 text-brand-600 font-bold text-xs uppercase tracking-wider mb-1">Lecture 05</div>
+                <h2 class="text-2xl font-bold text-slate-900 mb-3">딕셔너리, 집합 & 제어문 (if, while, for)</h2>
+                <p class="text-slate-600 leading-relaxed text-sm">
+                    Key-Value 쌍인 딕셔너리, 중복 없는 집합(Set) 구조와 조건에 따라 흐름을 제어하는 조건문(<code class="bg-slate-100 px-1 py-0.5 rounded text-blue-600">if-elif-else</code>), 반복문(<code class="bg-slate-100 px-1 py-0.5 rounded text-blue-600">while</code>, <code class="bg-slate-100 px-1 py-0.5 rounded text-blue-600">for</code>)을 종합 학습합니다.
+                </p>
+            </div>
+
+            <!-- Structural Summary Card -->
+            <div class="grid gap-4 md:grid-cols-2">
+                <div class="bg-white p-4.5 rounded-xl border border-slate-200 shadow-sm">
+                    <h3 class="font-bold text-slate-900 text-base mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-book-bookmark text-blue-500"></i> Dictionary & Set
+                    </h3>
+                    <ul class="text-xs text-slate-600 space-y-1.5 list-disc list-inside">
+                        <li><strong class="text-slate-800">Dictionary:</strong> <code class="bg-slate-100 px-1 py-0.5 rounded">{Key: Value}</code> 형태. 중복 키 불가.</li>
+                        <li><code class="bg-slate-100 px-1 py-0.5 rounded text-indigo-600">.keys()</code>, <code class="bg-slate-100 px-1 py-0.5 rounded text-indigo-600">.values()</code>, <code class="bg-slate-100 px-1 py-0.5 rounded text-indigo-600">.items()</code> 사용</li>
+                        <li><strong class="text-slate-800">Set (집합):</strong> 중복 허용 안 함, 순서 없음 (<code class="bg-slate-100 px-1 py-0.5 rounded">&</code> 교집합, <code class="bg-slate-100 px-1 py-0.5 rounded">|</code> 합집합)</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white p-4.5 rounded-xl border border-slate-200 shadow-sm">
+                    <h3 class="font-bold text-slate-900 text-base mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-[#] text-blue-500"></i> 제어문 (Control Flow)
+                    </h3>
+                    <ul class="text-xs text-slate-600 space-y-1.5 list-disc list-inside">
+                        <li><strong class="text-slate-800">조건문:</strong> <code class="bg-slate-100 px-1 py-0.5 rounded text-blue-600">if</code> &rarr; <code class="bg-slate-100 px-1 py-0.5 rounded text-blue-600">elif</code> &rarr; <code class="bg-slate-100 px-1 py-0.5 rounded text-blue-600">else</code></li>
+                        <li><strong class="text-slate-800">반복문:</strong> <code class="bg-slate-100 px-1 py-0.5 rounded text-blue-600">while 조건:</code> (조건이 참일 동안 반복)</li>
+                        <li><strong class="text-slate-800">for문:</strong> <code class="bg-slate-100 px-1 py-0.5 rounded text-blue-600">for 변수 in 범위/리스트:</code></li>
+                        <li><code class="bg-slate-100 px-1 py-0.5 rounded text-emerald-600">range(1, 10)</code>: 1부터 9까지의 숫자 범위 생성</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Code Example 5 -->
+            <div class="bg-slate-900 rounded-xl overflow-hidden shadow-md border border-slate-800">
+                <div class="bg-slate-800 px-4 py-2.5 flex items-center justify-between text-xs text-slate-300">
+                    <span class="font-mono flex items-center gap-2"><i class="fa-brands fa-python text-yellow-400"></i> 딕셔너리 & 제어문 코드 실습</span>
+                    <button onclick="copyCode('code-lec5')" class="hover:text-white px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 transition flex items-center gap-1">
+                        <i class="fa-regular fa-copy"></i> 복사
+                    </button>
+                </div>
+                <div class="p-4 overflow-x-auto code-scroll">
+                    <pre><code id="code-lec5" class="text-emerald-400"># 1. 딕셔너리 예시
+pair = {"짜장면": "탕수육", "치킨": "맥주"}
+print(pair.get("치킨"))        # '맥주'
+print("떡볶이" in pair)        # False
+
+# 2. if-elif-else 성적 판별
+score = 85
+if score >= 90:
+    print("A")
+elif score >= 80:
+    print("B")
+else:
+    print("F")
+
+# 3. for문과 range를 활용한 구구단 (중첩 루프)
+for i in range(2, 10):         # 2단 ~ 9단
+    for j in range(1, 10):     # 1 ~ 9 곱하기
+        print(i, "x", j, "=", i * j)</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB: Source Code Collection -->
+        <section id="sourceCode" class="tab-content hidden space-y-4">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 mb-4">
+                <h2 class="text-2xl font-bold text-slate-900 mb-2">원본 소스 코드 모음집</h2>
+                <p class="text-slate-600 text-sm">
+                    업로드해주신 <code class="bg-slate-100 text-slate-800 px-1.5 py-0.5 rounded font-mono">1.py</code>부터 <code class="bg-slate-100 text-slate-800 px-1.5 py-0.5 rounded font-mono">5.py</code>까지의 전체 원본 코드 및 주석 모음입니다. 각 카드를 클릭하면 코드가 펼쳐집니다.
+                </p>
+            </div>
+
+            <!-- Accordion File Items -->
+            <!-- 1.py -->
+            <div class="border border-slate-200 bg-white rounded-xl overflow-hidden shadow-sm">
+                <button onclick="toggleAccordion('acc-1')" class="w-full px-5 py-4 flex items-center justify-between text-left font-bold text-slate-800 bg-slate-50 hover:bg-slate-100 transition">
+                    <span class="flex items-center gap-2 font-mono text-sm"><i class="fa-regular fa-file-code text-blue-600"></i> 1.py 원본 코드 전체보기</span>
+                    <i id="icon-acc-1" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+                </button>
+                <div id="acc-1" class="hidden border-t border-slate-200 bg-slate-900 p-4">
+                    <pre class="overflow-x-auto code-scroll text-emerald-400"><code id="code-src-1"># # 파이썬의 자료형
+
+# # 정수형
+# print(3)
+# print(100)
+
+# # 실수형
+# print(3.14)
+# print(-120.22)
+
+# # 숫자형 연산
+# print(2+2)
+# print(99-98)
+# print(4*8)
+# print(16/4)
+
+# # 더 복잡한 연산
+# print(2*(5+2))
+# print((8/2)/4)
+
+# # 문자형
+# print("Hello World")
+# print('Hello World')
+# print("""Hello World""")
+# print('''Hello World''')
+# print("My favorite is Ted's steakhouse")
+# print('그는 "동작그만, 밑장빼기냐?"라고 말했다.')
+
+# # escape code
+# print('그는 \n"처음부터 밑장빼기냐?"\n라고 말했다.')
+# print('그는')
+# print('"처음부터 밑장뺴기냐?"')
+# print('라고 말했다.')
+
+# # 탭 간격 \t
+# print("tab\t간격")
+
+# # \\넣기 /슬러시 \백슬러시
+# print("문장에 \\을 넣고싶으면 \\을 두번 입력하세요.")
+
+# # 작은 따옴표 넣기
+# print("문장에 '작은 따옴표'를 넣으려면")
+# print('문장에 \'작은 따옴표\'를 넣으려면')
+
+# # 큰 따옴표 넣기
+# print('작은 따옴표를 사용하면 "큰따옴표"를 넣을 수 있지')
+# print("작은 따옴표를 사용하지 않아도 \"큰따옴표\"를 넣을 수 있지")
+
+# # 글자의 수를 세는 len
+# print(len("ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ"))
+
+# # 변수 안에 든 문자의 수를 세는 중
+# a = "ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ"
+# print(len(a))
+        
+# # 변수 안에 든 문자의 수를 세어 다른 변수에 값을 집어넣는 중
+# b = len(a)
+# print(b)
+
+# # 문자열 연산
+# print("ㅋ"*12)
+
+# # 문자형 연산
+# a = "pen "
+# b = "pineapple "
+# c = "apple "
+
+# print(a+b+c)
+
+# a = "액자 속 사진 속의\n그 "
+# b = "홍합 홍합 홍합 홍합 홍합 홍합 홍합 홍합\n\n"
+# c = "왕밤빵 왕밤빵 왕밤빵 왕밤빵\n\n"
+# d = "그립다 그리워 "
+# e = "\n"
+# print(a+b+a+c+d*2+e+b+d*2+e+c+d+e+d+e+d)
+
+a = "Life is too short, You need python"
+# print(a[3])
+# print(a[0])
+# print(a[0],a[1],a[2],a[3])
+# print(a[19]+a[20]+a[21])
+# 12부터 16자리까지 출력
+print(a[12:17])
+print(a[-1])
+print(a[-6:])
+print(a[0:4])
+# 0부터 시작해도, 공백으로 시작해도 같은 결과 출력
+print(a[0:17])
+print(a[:17])
+print(a)
+print(a[:])
+print(a[19:-7])
+print(a[8:17])
+print(a[8:-17])
+print(a[23:])
+print(a[-11:])</code></pre>
+                </div>
+            </div>
+
+            <!-- 2.py -->
+            <div class="border border-slate-200 bg-white rounded-xl overflow-hidden shadow-sm">
+                <button onclick="toggleAccordion('acc-2')" class="w-full px-5 py-4 flex items-center justify-between text-left font-bold text-slate-800 bg-slate-50 hover:bg-slate-100 transition">
+                    <span class="flex items-center gap-2 font-mono text-sm"><i class="fa-regular fa-file-code text-blue-600"></i> 2.py 원본 코드 전체보기</span>
+                    <i id="icon-acc-2" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+                </button>
+                <div id="acc-2" class="hidden border-t border-slate-200 bg-slate-900 p-4">
+                    <pre class="overflow-x-auto code-scroll text-emerald-400"><code id="code-src-2"># print("ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ")
+# print("ㅋ"*13)
+
+# a = "pen"
+# b = "pineapple"
+# c = "apple"
+# print(a,b,c,a)
+
+# d = a+b+c+a
+# print(d)
+# print(len(d))
+
+# a = "가나다라마바사 아자차카타파하\n"
+# b = "오디오 기러기 토마토 스위스\n"
+# c = "액자 속 사진 속의\n그"
+# d = "홍합 "
+# e = "왕밤빵 "
+
+# print(a*2+b*2+c+d*8+'\n'+c+e*5)
+
+# py = "Life is too short, you need python"
+# print(py[3])
+# print(py[12])
+# print(py[-9])
+
+# print(py[19]+py[20]+py[21])
+# print(py[19:22])
+# print(py[28:])
+
+# print(py[23:])
+# print(py[-11:])
+
+# date = "20260917목요일"
+
+# print(date[0:8])
+# print(date[-3:])
+# print(date[8:])
+# print(date[0:4],date[4:6],date[6:8])
+
+p = "20260916맑음28.5"
+print("year:"+ p[:4])
+print("month:"+ p[4:6])
+print("day:"+ p[6:8])
+print("Weather:"+ p[8:10])
+print("temp:"+ p[-4:])
+
+print('나는 1학년 입니다.')
+print('나는 %d학년 입니다.'%2)
+print('나는 %s학년 입니다.'%"2")
+print('나는 %s학년 입니다.'%"이")
+grade = 2
+print('나는 %d학년 입니다.'%grade)
+
+# pi = 3.1415926535897
+
+# print('원주율은 %f입니다'%pi)
+# print('원주율은 %0.2f입니다'%pi)
+# print('원주율은 %0.5f입니다'%pi)
+# grade = 1
+# num = 202627011
+# print("나는 %d학년입니다.\n 학번은 %d입니다"%(grade, num))
+
+# grade = 2
+# score = 3.8
+# percent = 20
+# print("나는 %d학년입니다.\n%d학년 학점은 %s입니다."%(grade, grade-1, score))
+
+# print("나는 %d학년 입니다.\n%c년 학점은 %.1f입니다.\n성적은 상위 %d%%입니다."%(grade,"작", score, percent))
+
+
+# a = 11
+# print(
+#     "내 이름은 %s입니다.\n집에서 학교까지는 %d분 걸립니다.\n%d분 동안 %s를 타고 옵니다."% ("장유성", a, a, "버스"))
+# print("%12s"%"안녕")
+# print("%-10s여려분"%"안녕")
+
+# py = 3.141592
+# print("%0.2f"%py)
+# print("%0.6f"%py)
+# print("%10.2f"%py)
+
+# a = "20260916"
+# b = 28.5
+# c = "단풍"
+# d = "강원충북전남제주"
+# e = "9월 "
+# print("오늘은 "+a[0:4]+"년 "+a[4:6]+"월 "+a[6:8]+"일입니다.")
+# print("낮 기온은 %0.1f도이고 흐린 뒤 갭니다."%b)
+# print("%s의 절정시기는 다음과 같습니다.\n"%c)
+# print(d[:2]+" 설악산 "+e+"26일")
+# print(d[2:4]+" 속리산 10월 8일")
+# print(d[4:6]+" 지리산 10월 13일")
+# print(d[6:8]+" 한라산 10월 18일")
+
+# print("나는 피자를 %d조각 먹을 수 있어"%2)
+# print("나는 피자를 {0}조각 먹을 수 있어".format(2))
+
+# print("나는 피자를 %c조각 먹을 수 있어"%"두")
+# print("나는 피자를 {0}조각 먹을 수 있어".format("두"))
+
+# piece = 5
+# print("나는 피자를 {0}조각 먹을 수 있어".format(piece))
+
+# print("나는 {0}를 {1}조각 먹을 수 있어".format("피자",5))
+
+# food = "과자"
+# piece = 20
+# print("나는 {0}를 {1}조각 먹을 수 있어".format(food,piece))
+
+# print("나는 {food}를 {piece}조각 먹을 수 있어".format(food="과자",piece="20"))
+
+# print("나는 {0}를 {piece}조각 먹을 수 있어".format("과자",piece=20))
+
+#1
+print("{0}와 {1} 사이의 거리는 평균 {2}km입니다.".format("지구","달",384000))
+
+#2
+earth = "지구"
+moon = "달"
+km = 384000
+print("{0}와 {1} 사이의 거리는 평균 {2}km입니다.".format(earth,moon,km))
+
+#3
+print("{earth}와 {moon} 사이의 거리는 평균 {km}km입니다.".format(earth="지구",moon="달",km=384000))
+
+#4
+print("{0}와 {1} 사이의 거리는 평균 {km}km입니다.".format("지구","달",km=384000))
+
+a = "20260916"
+b = 28.5
+c = "단풍"
+d = "강원충북전남제주"
+e = "9월 "
+
+print("오늘은 {0}년 {1}월 {2}일입니다.".format(a[:4], a[4:6], a[6:]))
+
+print("낮 기온은 {0}도이고 흐린 뒤 갭니다.".format(b))
+
+print("{c}의 절정시기는 다음과 같습니다.\n".format(c="단풍"))
+
+print("{0} 설악산 {1}26일".format(d[:2],e))
+print("{0} 속리산 10월 8일".format(d[2:4]))
+print("{0} 지리산 10월 13일".format(d[4:6]))
+print("{0} 한라산 10월 18일".format(d[6:8]))</code></pre>
+                </div>
+            </div>
+
+            <!-- 3.py -->
+            <div class="border border-slate-200 bg-white rounded-xl overflow-hidden shadow-sm">
+                <button onclick="toggleAccordion('acc-3')" class="w-full px-5 py-4 flex items-center justify-between text-left font-bold text-slate-800 bg-slate-50 hover:bg-slate-100 transition">
+                    <span class="flex items-center gap-2 font-mono text-sm"><i class="fa-regular fa-file-code text-blue-600"></i> 3.py 원본 코드 전체보기</span>
+                    <i id="icon-acc-3" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+                </button>
+                <div id="acc-3" class="hidden border-t border-slate-200 bg-slate-900 p-4">
+                    <pre class="overflow-x-auto code-scroll text-emerald-400"><code id="code-src-3"># print("{0}는 지구에서 {1}년 전에 멸종했다.".format("매머드",4000))
+
+# #2
+# monster = "매머드"
+# year = 4000
+# print("{0}는 지구에서 {1}년 전에 멸종했다.".format(monster,year))
+
+# #3
+# print("{monster}는 지구에서 {year}년 전에 멸종했다.".format(monster="매머드",year=4000))
+
+# #4
+# print("{0}는 지구에서 {year}년 전에 멸종했다.".format("매머드",year=4000))
+
+print("%-10s!"%"어서와")
+print("{0:<10}!".format("어서와"))
+
+# print("%10s!" %"어서와")
+# print("{0:>10}!".format("어서와"))
+
+print("{0:<9}".format("어서와"))
+
+print("{0:-^19}".format("어서와"))
+
+# #퀘스트
+# print("{0:=^19}".format("안녕하세요"))
+# print("{0:O<9}".format("제 이름은 "),"입니다")
+# print("{0:>6}".format("학번은"),"{0:0>14}".format("입니다."))
+
+# print("{0}".format(3.141492))
+# print("{0:f}".format(3.141492))
+
+# k = 0.2525
+# print("{0}".format(k))
+# print("%10s"%"{0}".format(k))
+
+# print("{0:0.2f}".format(3.141592))
+
+# c = "1234"
+# print(":".join(c))
+
+# d = "calientaacabazas"
+# print(len(d))
+# e = d.upper()
+# print(d)
+# print(e)
+# print(e.lower())
+# print(e.count('A'))
+
+# monday = "   월요일 좋아   "
+# print(monday.lstrip())
+# print(monday.strip())
+# print(monday.replace("월", "화"))
+# print(monday.replace("좋아", "싫어"))
+# good = "월요일 좋아 화요일 좋아"
+# print(good.split())
+# print(":".join(good))
+
+# input()
+# a = input()
+# b = input("값을 입력하세요")
+
+# name = input("이름을 입력하세요")
+# print(name,"님 반갑습니다")
+
+# a = input("a값을 입력하세요")
+# b = input("b값을 입력하세요")
+# print(a+b)
+
+# num1 = int(input("첫번째 숫자를 입력하세요"))
+# num2 = int(input("두번째 숫자를 입력하세요"))
+# print("두 숫자의 합은",num1+num2,"입니다")
+
+# print("{0:-^30}".format(""))
+# name = input("받는 사람 : ")
+# juso = input("주소 : ")
+# gram = int(input("무게(g) : "))
+# print("{0:-^30}".format(""))
+# print("받는 사람 : ",name)
+# print("주소 : ",juso)
+# money = gram * 5
+# print("배송비는 ",money,"원 입니다")
+# print("{0:-^30}".format(""))
+
+# hello, world = input("Hello World").split()
+# print(hello)
+# print(world)
+
+# a, b = int(input("두개의 숫자를 입력하세요").split(','))
+# a = int(a)
+# b = int(b)
+# print("두 값을 더하면",a+b,"입니다.")
+
+# a = input("입력 : ")
+# print("출력 :",a[::-1])
+
+# name = input("이름을 입력하시오 : ")
+# print("{0:-^20}".format(name))
+
+word = input("단어를 입력하세요 :")
+print("=" * len(word))
+print(word)
+print("=" * len(word))
+
+text = input("글자를 입력하세요 :")
+print(text[-1] + text[1:-1] + text[0])</code></pre>
+                </div>
+            </div>
+
+            <!-- 4.py -->
+            <div class="border border-slate-200 bg-white rounded-xl overflow-hidden shadow-sm">
+                <button onclick="toggleAccordion('acc-4')" class="w-full px-5 py-4 flex items-center justify-between text-left font-bold text-slate-800 bg-slate-50 hover:bg-slate-100 transition">
+                    <span class="flex items-center gap-2 font-mono text-sm"><i class="fa-regular fa-file-code text-blue-600"></i> 4.py 원본 코드 전체보기</span>
+                    <i id="icon-acc-4" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+                </button>
+                <div id="acc-4" class="hidden border-t border-slate-200 bg-slate-900 p-4">
+                    <pre class="overflow-x-auto code-scroll text-emerald-400"><code id="code-src-4"># a = "You're my soda pop. My little soda pop."
+
+# print(a.count("d"))
+# # print(a.index("x"))
+# print(a.find("x"))
+# print(a.find("Y"))
+# print(a.find("s")) 
+# print(a.index("o"))
+
+# first = a.find('o')
+# second = a.find('o', first+1)
+# third = a.find('o', second+1)
+# print(first, second, third)
+
+# golden = "I was a ghost, I was alone. 어두워진 앞길속에"
+
+# print(golden.upper())
+# print(len(golden))
+# print(golden.count('n'))
+# print('!'.join(golden))
+
+# coke = "___코카콜라 맛있다___"
+
+# print(coke)
+# print(len(coke))
+# left = "{:<20}".format(coke)
+# print(left)
+# print(len(left))
+# right = "{:>20}".format(coke)
+# print(right)
+# print(len(right))
+
+# a = []
+# b = [63, 57, 40, 17, 9]
+# c = ['가', '노', '누', '서', '수']
+# d = [63, 57, 17, '가', '수', '서']
+# e = [1, 2, ['63가', '57수', [3,4]]]
+
+# print(b[0])
+# print(b[3]+b[1])
+# print(c[4])
+# print(c[0]*3)
+# print(d[2], d[-1])
+# print(d[0]+d[1])
+# print(e[2][0], e[2][1])
+# print(e[2][2][0], e[2][2][1])
+# print(e[0], e[1], e[2][2][0], e[2][2][1])
+
+# oct = [1,2,['a','b',['오뚜기','오징어']]]
+
+# print(oct[2][2][1])
+
+# car = ['이','차는','이제','제 겁니다']
+
+# print(car[0],car[1],car[2],car[3])
+# print(car[2],car[-1])
+# print(car[-1])
+# print(car[3])
+
+# miss = ['그립다 그리워']
+
+# print(miss[0]*2)
+# print(miss[0]*4)
+
+# num = [1,2,3,4]
+
+# print(num)
+# num[3] = 5
+# print(num)
+# del num[2]
+# print(num)
+# del num[1]
+# print(num)
+
+# a = [1,2,3]
+# b = [4,5,6]
+
+# print(a+b)
+# c = a+b
+# print(a+b)
+# print(c)
+
+# string = "1,2,3,4"
+# stringh = "홍합"
+
+# list = [1,2,3,4]
+# listh = ['홍합 ',8]
+
+# print(string[0]+string[2])
+# print(list[0]+list[2])
+
+# print(listh[0]*listh[1])
+
+# a = ['소', '돼지', '양']
+
+# print(a)
+# a.append('닭')
+# print(a)
+# a.append('오리')
+# print(a)
+
+# a = ['소', '돼지', '양']
+# b = ['닭', '오리']
+
+# a.append(b)
+# a.append(['양','닭'])
+# print(a)
+# print(a[0],a[3][0])
+# print(a[3][-1])
+# print(a[3][1])
+# print(a[-2][1])
+
+# c = [21,2,27,24,8]
+
+# c.sort()
+# print(c)
+# c.reverse()
+# print(c)
+
+# d = ['c','a','t','d','o','g']
+
+# d.sort()
+# print(d)
+# d.reverse()
+# print(d)
+
+# e = ['가','라','바','사','나','마','다']
+
+# e.sort()
+# print(e)
+# e.reverse()
+# print(e)
+
+# food = ['pizza','chicken','burger']
+
+# print(food.index('chicken'))
+# print(food.index('burger'))
+# # print(food.index('salad'))
+# food.insert(3,'salad')
+# print(food.index('salad'))
+# food.insert(0,'hotdog')
+# print(food)
+# food.insert(3,'pizza')
+# print(food)
+# food.remove('salad')
+# print(food)
+# food.remove('pizza')
+# print(food)
+# food.remove('pizza')
+# print(food)
+
+# animal = ['강아지','고양이','고슴도치','토끼']
+
+# print(animal.pop())
+# print(animal)
+# animal.pop(2)
+# print(animal)
+# print(animal.pop(0))
+# print(animal)
+# animal.insert(0,'물고기')
+# print(animal)
+# animal.insert(3,'강아지')
+# print(animal)
+# animal.insert(0,'햄스터')
+# print(animal)
+# print(animal.count('강아지'))
+# print(animal.count('고양이'))
+# print(animal.count('코끼리'))
+# print(animal.pop())
+# print(animal)
+
+# food = ['소','돼지','양']
+
+# food.extend(['닭','오리'])
+# print(food)
+# food.append(['토끼','호랑이'])
+# print(food)
+# food.extend(['토끼','호랑이'])
+# print(food)
+
+# food = ['소','돼지','양']
+
+# food.extend(['닭','오리'])
+# print(food)
+
+# n = [1,2,3,4]
+# m = [5,6,7,8]
+
+# o = n+m
+# print(o)
+# n.extend(food)
+# print(n)
+
+# a = (1)
+# b = (2,3,4,5)
+# c = (11,22,'a','b','c')
+# d = (33,44,('d','e','f'))
+
+# print(a,b)</code></pre>
+                </div>
+            </div>
+
+            <!-- 5.py -->
+            <div class="border border-slate-200 bg-white rounded-xl overflow-hidden shadow-sm">
+                <button onclick="toggleAccordion('acc-5')" class="w-full px-5 py-4 flex items-center justify-between text-left font-bold text-slate-800 bg-slate-50 hover:bg-slate-100 transition">
+                    <span class="flex items-center gap-2 font-mono text-sm"><i class="fa-regular fa-file-code text-blue-600"></i> 5.py 원본 코드 전체보기</span>
+                    <i id="icon-acc-5" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+                </button>
+                <div id="acc-5" class="hidden border-t border-slate-200 bg-slate-900 p-4">
+                    <pre class="overflow-x-auto code-scroll text-emerald-400"><code id="code-src-5"># pair = {"짜장면":"탕수육","떡볶이":"튀김","치킨":"맥주"}
+# # del pair["짜장면"]
+# # print(pair)
+# user = {"이름":"장유성","메일주소":"dbtjda@gmail.com","생일":"0502"}
+# menu = {"한식":["된장찌개","비빔밥","김치전"],"중식":["마라탕","가지튀김","양꼬치"],"일식":["초밥","스시","규동"],"맥주":["치킨","칭따오","감자튀김"]}
+# # print(menu)
+# # del menu["맥주"]
+# # print(menu)
+# # print(menu["중식"])
+# # 딕셔너리는 중복되지 않는 키값으로 관리한다.
+# # menu = {"중식":["마라탕","가지튀김","양꼬치"]}
+# print(menu.keys())
+# print(pair.keys())
+# print(menu.values())
+# print(pair.values())
+# print(menu.items())
+# print(pair.items())
+# print(menu.clear())
+# print(pair.get("떡볶이"))
+# print(user.get("생일"))
+# print("치킨"in pair)
+# print("짬뽕"in pair)
+# print("치킨"in user)
+
+# lunch = [ '맵고','안 맵고',['따뜻한', '차가운',['빵','밥','면','떡']]]
+# print(lunch)
+# # print(lunch['맵고'])
+# del lunch['떡']
+# print(lunch)
+
+# menu = ['한식','양식','중식','일식']
+
+# print(menu.count('양식'))
+# print(menu.sort())
+
+# a = set(["hello"])
+# b = set([1,2,3])
+
+# print(a)
+# print(b)
+
+# a.add("world")
+
+# b.update("")
+
+# a = set(["짜파게티","짜파구리","너구리"])
+# b = set(["신라면","너구리","진라면"])
+
+# a & b
+
+# a | b
+
+# a - b
+
+# a = True
+# b = False
+# c = 'abc'
+# d = 123
+# e = [1,2,3]
+# f = (1,2,3)
+
+# print(type(a))
+# print(type(b))
+# print(type(c))
+# print(type(d))
+# print(type(e))
+# print(type(f))
+
+# subscriber = 1250000
+# print("구독자 수는", subscriber, "입니다")
+
+# if subscriber>=1000000:
+#     print("골드버튼을 신청하세요")
+# else:
+#     print("구독자를 더 모으세요")
+
+# k = 171
+# print("키가 ",k," 입니다")
+# if k >= 130:
+#     worldcup = "입장하세요."
+# else:
+#     worldcup = "입장할 수 없습니다."
+
+# print(worldcup)
+
+# k = 150000
+# if k >= 1000000:
+#     print("골드버튼")
+# if k >= 100000:
+#     print("실버버튼")
+# else:
+#     print("?")
+
+# score = 100
+# if score >= 95:
+#     print("A+")
+# elif score >= 90:
+#     print("A")
+# elif score >= 80:
+#     print("B")
+# elif score >= 60:
+#     print("C")
+# else:
+#     print("F")
+
+# avo = True
+# mlik = True
+# cart = ["milk"]
+# if avo:
+#     cart.append("avo"*6)
+# print(cart)
+
+# a = 0
+# while a<10:
+#     a=a+1
+#     print(a)
+
+# a = 990000
+# while a<1000000:
+#     a=a+1
+#     print(a)
+
+# hole = 0
+# cup = ['flag']
+# while hole <= 18:
+#     if 'ball' in cup:
+#         hole = hole +1
+#         print("현재 위치는", hole,"홀 입니다.")
+#     else:
+#         cup.append("ball")
+
+
+# while True:
+#     print("내 루프가 멈추지 않아~")
+
+# menu = ['한식','양식','중식','일식']
+# for
+
+# a = 2
+# num = [1,2,3,4,5,6,7,8,9]
+# for result in num:
+#     print(a,"x",result,"=",a*result)
+
+# a = [0,1,2,3,4,5,6,7,8,9]
+# b = range(0,10)
+# c = range(10)
+
+# sum = 0
+# for i in range(1, 600):
+#     sum += i
+# print(sum)
+
+for i in range(2,10):
+    for j in range(1,10):
+        print(i,"x",j,"=",i*j)</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB: Interactive Quiz App -->
+        <section id="quiz" class="tab-content hidden space-y-6">
+            <div class="bg-gradient-to-r from-blue-900 to-indigo-900 text-white p-6 rounded-2xl shadow-md flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-bold mb-1">파이썬 기초 점검 퀴즈</h2>
+                    <p class="text-xs text-blue-200">1강부터 5강까지 핵심 내용을 문제로 확인해 보세요!</p>
+                </div>
+                <div class="bg-white/10 px-3 py-1.5 rounded-lg border border-white/20 text-center">
+                    <span class="block text-xs text-blue-200">문항 수</span>
+                    <span class="font-bold text-lg text-yellow-300">5 문제</span>
+                </div>
+            </div>
+
+            <!-- Quiz Container Dynamic Insertion -->
+            <div id="quiz-container" class="space-y-4"></div>
+
+            <!-- Quiz Result & Submit Button -->
+            <div class="bg-white p-5 rounded-xl border border-slate-200 text-center space-y-3">
+                <button id="submit-btn" onclick="checkQuizResults()" class="w-full py-3.5 px-6 bg-brand-600 hover:bg-brand-700 active:scale-95 transition text-white font-bold rounded-xl shadow-lg shadow-brand-500/20 text-base">
+                    퀴즈 정답 채점하기
+                </button>
+                <div id="quiz-score-board" class="hidden pt-3 border-t border-slate-100">
+                    <h3 class="text-lg font-bold text-slate-800">최종 점수: <span id="user-score" class="text-brand-600 text-2xl">0</span> / 5점</h3>
+                    <p id="score-feedback" class="text-xs text-slate-500 mt-1"></p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Bottom Mobile Nav Hint -->
+    <footer class="mt-auto py-6 border-t border-slate-200 bg-white text-center text-xs text-slate-400">
+        <p>© Python Basic Interactive Hub • Designed for Mobile Learning</p>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // 1. Tab Switching Functionality
+        function switchTab(tabId) {
+            // Hide all tab contents
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(el => el.classList.add('hidden'));
+
+            // Remove active style from all tab buttons
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-slate-700', 'text-white', 'shadow-inner');
+                btn.classList.add('text-slate-300');
+            });
+
+            // Show selected tab content
+            const target = document.getElementById(tabId);
+            if (target) {
+                target.classList.remove('hidden');
+            }
+
+            // Highlight active button
+            const activeBtn = document.getElementById('tab-' + tabId);
+            if (activeBtn) {
+                activeBtn.classList.add('bg-slate-700', 'text-white', 'shadow-inner');
+                activeBtn.classList.remove('text-slate-300');
+                // Scroll tab button into view on mobile
+                activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+        }
+
+        // 2. Code Copy Function
+        function copyCode(elementId) {
+            const codeText = document.getElementById(elementId).innerText;
+            
+            // Clipboard Fallback Strategy
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(codeText).then(showToast);
+            } else {
+                // Fallback using execCommand
+                const textarea = document.createElement("textarea");
+                textarea.value = codeText;
+                textarea.style.position = "fixed";
+                textarea.style.left = "-999999px";
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    showToast();
+                } catch (err) {
+                    console.error('Copy failed', err);
+                }
+                document.body.removeChild(textarea);
+            }
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            toast.classList.add('opacity-100');
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'pointer-events-none');
+                toast.classList.remove('opacity-100');
+            }, 2000);
+        }
+
+        // 3. Accordion Toggle
+        function toggleAccordion(id) {
+            const el = document.getElementById(id);
+            const icon = document.getElementById('icon-' + id);
+            if (el.classList.contains('hidden')) {
+                el.classList.remove('hidden');
+                icon.classList.add('rotate-180');
+            } else {
+                el.classList.add('hidden');
+                icon.classList.remove('rotate-180');
+            }
+        }
+
+        // 4. Interactive Quiz Data & Engine
+        const quizData = [
+            {
+                id: 1,
+                lecture: "1강",
+                question: "파이썬 문자열 `a = 'python'`에서 `a[1:4]`의 실행 결과로 올바른 것은?",
+                options: ["pyt", "yth", "ytho", "tho"],
+                correct: 1,
+                explanation: "슬라이싱 [1:4]는 인덱스 1번부터 (4-1=3)번 위치까지 추출하므로 'yth'가 됩니다."
+            },
+            {
+                id: 2,
+                lecture: "2강",
+                question: "문자열 포매팅 사용 시 정수형(Integer) 변수를 대입하기 위한 올바른 포맷 코드는?",
+                options: ["%s", "%f", "%d", "%c"],
+                correct: 2,
+                explanation: "%d는 정수(Decimal), %s는 문자열, %f는 실수(Float)를 의미합니다."
+            },
+            {
+                id: 3,
+                lecture: "3강",
+                question: "사용자에게 입력을 받는 `input()` 함수로 숫자 '100'을 입력받았을 때, 반환되는 값의 기본 자료형은?",
+                options: ["int (정수형)", "float (실수형)", "str (문자열)", "bool (불리언)"],
+                correct: 2,
+                explanation: "input()으로 입력받은 모든 값은 기본적으로 '문자열(str)' 형태가 됩니다."
+            },
+            {
+                id: 4,
+                lecture: "4강",
+                question: "다음 파이썬 리스트/튜플에 대한 설명 중 잘못된 것은?",
+                options: [
+                    "리스트는 append()로 새 요소를 추가할 수 있다.",
+                    "튜플(Tuple)은 한번 선언되면 요소를 수정/삭제할 수 없다.",
+                    "find() 메서드는 리스트와 문자열 모두에서 사용 가능하다.",
+                    "sort() 메서드는 리스트 요소를 오름차순으로 정렬한다."
+                ],
+                correct: 2,
+                explanation: "find() 메서드는 '문자열' 전용입니다. 리스트에서 요소의 위치를 찾을 때는 index()를 사용합니다."
+            },
+            {
+                id: 5,
+                lecture: "5강",
+                question: "다음 중 딕셔너리(Dictionary)의 모든 Key 값들만 모아서 가져오는 메서드는?",
+                options: [".values()", ".keys()", ".items()", ".get()"],
+                correct: 1,
+                explanation: ".keys()는 딕셔너리의 Key 모음을, .values()는 Value 모음을, .items()는 (Key, Value) 쌍을 반환합니다."
+            }
+        ];
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = quizData.map((q, idx) => `
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3" id="quiz-card-${q.id}">
+                    <div class="flex items-center justify-between">
+                        <span class="bg-brand-50 text-brand-700 text-xs font-bold px-2.5 py-1 rounded-full border border-brand-100">${q.lecture}</span>
+                        <span class="text-xs text-slate-400 font-medium">Q${idx + 1} of ${quizData.length}</span>
+                    </div>
+                    <h3 class="font-bold text-slate-900 text-sm md:text-base leading-snug">${q.question}</h3>
+                    <div class="space-y-2 pt-1">
+                        ${q.options.map((opt, oIdx) => `
+                            <label class="flex items-center p-3 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 active:bg-blue-50 cursor-pointer transition text-xs md:text-sm text-slate-700">
+                                <input type="radio" name="quiz-${q.id}" value="${oIdx}" class="w-4 h-4 text-brand-600 focus:ring-brand-500 mr-2.5">
+                                <span>${opt}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                    <div id="quiz-feedback-${q.id}" class="hidden p-3 rounded-lg text-xs leading-relaxed"></div>
+                </div>
+            `).join('');
+        }
+
+        function checkQuizResults() {
+            let score = 0;
+
+            quizData.forEach(q => {
+                const selected = document.querySelector(`input[name="quiz-${q.id}"]:checked`);
+                const feedbackEl = document.getElementById(`quiz-feedback-${q.id}`);
+                const cardEl = document.getElementById(`quiz-card-${q.id}`);
+                
+                feedbackEl.classList.remove('hidden', 'bg-emerald-50', 'text-emerald-800', 'bg-rose-50', 'text-rose-800', 'border-emerald-200', 'border-rose-200');
+
+                if (selected && parseInt(selected.value) === q.correct) {
+                    score++;
+                    feedbackEl.classList.add('bg-emerald-50', 'text-emerald-800', 'border', 'border-emerald-200');
+                    feedbackEl.innerHTML = `<p class="font-bold mb-1"><i class="fa-solid fa-circle-check text-emerald-600"></i> 정답입니다!</p><p>${q.explanation}</p>`;
+                } else {
+                    feedbackEl.classList.add('bg-rose-50', 'text-rose-800', 'border', 'border-rose-200');
+                    feedbackEl.innerHTML = `<p class="font-bold mb-1"><i class="fa-solid fa-circle-xmark text-rose-600"></i> 오답입니다 (정답: ${q.options[q.correct]})</p><p>${q.explanation}</p>`;
+                }
+            });
+
+            // Scoreboard update
+            const scoreBoard = document.getElementById('quiz-score-board');
+            const scoreText = document.getElementById('user-score');
+            const feedbackText = document.getElementById('score-feedback');
+
+            scoreBoard.classList.remove('hidden');
+            scoreText.innerText = score;
+
+            if (score === 5) {
+                feedbackText.innerText = "🎉 완벽합니다! 1강부터 5강까지의 파이썬 기초 완벽 마스터!";
+            } else if (score >= 3) {
+                feedbackText.innerText = "👍 아주 훌륭합니다! 틀린 부분의 탭으로 가서 다시 복습해 보세요.";
+            } else {
+                feedbackText.innerText = "💪 조금 더 연습이 필요합니다. 강의 내용을 다시 차근차근 복습해 보세요!";
+            }
+
+            scoreBoard.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Initialize Application
+        window.addEventListener('DOMContentLoaded', () => {
+            switchTab('lecture1');
+            renderQuiz();
+        });
+    </script>
+</body>
+</html>
